@@ -75,6 +75,7 @@ public class ParticleSimulator {
                 Particle p = particles[i][j];
                 Map<Direction, Particle> neighbors = getNeighbors(i, j);
                 p.action(neighbors);
+                p.decrementLifespan();
             }
         }
     }
