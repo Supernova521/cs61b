@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.Map;
 import java.awt.Color;
 
@@ -54,6 +56,60 @@ public class Particle {
         Particle p = neighbors.get(Direction.DOWN);
         if (p.flavor == ParticleFlavor.EMPTY) {
             moveInto(p);
+        }
+    }
+
+    public void action(Map<Direction, Particle> neighbors) {
+        if (this.flavor == ParticleFlavor.EMPTY) {
+            return;
+        }
+        if (this.flavor != ParticleFlavor.BARRIER) {
+            this.fall(neighbors);
+        }
+        if (this.flavor == ParticleFlavor.WATER) {
+            this.flow(neighbors);
+        }
+        if (this.flavor == ParticleFlavor.PLANT || this.flavor == ParticleFlavor.FLOWER) {
+            this.grow(neighbors);
+        }
+    }
+
+    public void flow(Map<Direction, Particle> neighbors) {
+        int number = StdRandom.uniformInt(3);
+        if (number == 0) {
+            return;
+        }
+        else if (number == 1) {
+            if (neighbors.get(Direction.LEFT).flavor == ParticleFlavor.EMPTY) {
+                this.moveInto(neighbors.get(Direction.LEFT));
+            }
+        }
+        else if (number == 2) {
+            if (neighbors.get(Direction.RIGHT).flavor == ParticleFlavor.EMPTY) {
+                this.moveInto(neighbors.get(Direction.RIGHT));
+            }
+        }
+    }
+
+    public void grow(Map<Direction, Particle> neighbors) {
+        int number = StdRandom.uniformInt(10);
+        if (number == 0) {
+            if (neighbors.get(Direction.UP).flavor == ParticleFlavor.EMPTY) {
+                neighbors.get(Direction.UP).flavor = this.flavor;
+                neighbors.get(Direction.UP).lifespan = this.lifespan;
+            }
+        }
+        else if (number == 1) {
+            if (neighbors.get(Direction.LEFT).flavor == ParticleFlavor.EMPTY) {
+                neighbors.get(Direction.LEFT).flavor = this.flavor;
+                neighbors.get(Direction.LEFT).lifespan = this.lifespan;
+            }
+        }
+        else if (number == 2) {
+            if (neighbors.get(Direction.RIGHT).flavor == ParticleFlavor.EMPTY) {
+                neighbors.get(Direction.RIGHT).flavor = this.flavor;
+                neighbors.get(Direction.RIGHT).lifespan = this.lifespan;
+            }
         }
     }
 }

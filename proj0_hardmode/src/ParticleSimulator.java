@@ -69,6 +69,39 @@ public class ParticleSimulator {
         return result;
     }
 
+    public void tick() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                Particle p = particles[i][j];
+                Map<Direction, Particle> neighbors = getNeighbors(i, j);
+                p.action(neighbors);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        // 1. Build a reverse map to look up characters by Flavor
+        Map<ParticleFlavor, Character> flavorToChar = new HashMap<>();
+        for (Map.Entry<Character, ParticleFlavor> entry : LETTER_TO_PARTICLE.entrySet()) {
+            flavorToChar.put(entry.getValue(), entry.getKey());
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        // Have to iterate from the top so that
+        // the top particles are shown first.
+        for (int y = height - 1; y >= 0; y -= 1) {
+            for (int x = 0; x < width; x += 1) {
+                Particle p = particles[x][y];
+                sb.append(flavorToChar.get(p.flavor));
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+
     static void main() {
         ParticleSimulator particleSimulator = new ParticleSimulator(150, 150);
         StdDraw.setXscale(0, particleSimulator.width);
@@ -90,6 +123,7 @@ public class ParticleSimulator {
                 }
             }
 
+            particleSimulator.tick();
             particleSimulator.drawParticles();
             StdDraw.show();
             StdDraw.pause(5);
