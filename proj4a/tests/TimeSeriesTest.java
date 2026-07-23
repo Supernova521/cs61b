@@ -22,6 +22,11 @@ public class TimeSeriesTest {
         dogPopulation.put(1994, 400.0);
         dogPopulation.put(1995, 500.0);
 
+        TimeSeries myPopulation = new TimeSeries();
+        myPopulation.put(1991, 100.0);
+        myPopulation.put(1992, 2.0);
+        myPopulation.put(1994, 10.0);
+
         TimeSeries totalPopulation = catPopulation.plus(dogPopulation);
         // expected: 1991: 0,
         //           1992: 100
@@ -45,6 +50,25 @@ public class TimeSeriesTest {
         for (int i = 0; i < expectedTotal.size(); i += 1) {
             assertThat(totalPopulation.data().get(i)).isWithin(1E-10).of(expectedTotal.get(i));
         }
+
+        TimeSeries dividePopulation = catPopulation.dividedBy(myPopulation);
+
+        List<Double> expectedDivision = new ArrayList<>();
+        expectedDivision.add(0.0 / 100.0);
+        expectedDivision.add(100.0 / 2.0);
+        expectedDivision.add(200.0 / 10.0);
+
+        for (int i = 0; i < expectedDivision.size(); i += 1) {
+            assertThat(dividePopulation.data().get(i)).isWithin(1E-10).of(expectedDivision.get(i));
+        }
+
+        TimeSeries myYears = new TimeSeries(catPopulation, 1992, 1994);
+
+        List<Integer> myExpectedYears = new ArrayList<>();
+        myExpectedYears.add(1992);
+        myExpectedYears.add(1994);
+
+        assertThat(myYears.years()).isEqualTo(myExpectedYears);
     }
 
     @Test
